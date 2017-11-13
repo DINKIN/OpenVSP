@@ -45,6 +45,7 @@ FitModelScreen.cpp
 FuselageScreen.cpp
 GroupLayout.cpp
 GuiDevice.cpp
+HeldenScreen.cpp
 HingeScreen.cpp
 IGESOptionsScreen.cpp
 ImportScreen.cpp
@@ -113,6 +114,7 @@ FitModelScreen.h
 FuselageScreen.h
 GroupLayout.h
 GuiDevice.h
+HeldenScreen.h
 HingeScreen.h
 IGESOptionsScreen.h
 ImportScreen.h
