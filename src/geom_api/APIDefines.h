@@ -222,6 +222,7 @@ enum COMPUTATION_FILE_TYPE  {   NO_FILE_TYPE        = 0,
                                 VSPAERO_PANEL_TRI_TYPE = 262144,
                                 DRAG_BUILD_CSV_TYPE = 524288,
                                 CFD_FACET_TYPE = 1048576,
+                                HELDEN_IGES_TYPE    = 2097152,
                             };
 
 enum SET_TYPE { SET_ALL = 0,

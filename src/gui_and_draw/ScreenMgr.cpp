@@ -146,6 +146,17 @@ void ScreenMgr::MessageCallback( const MessageBase* from, const MessageData& dat
             }
         }
     }
+    else if ( data.m_String == string( "HeldenMessage" ) )
+    {
+        HeldenScreen* scr = ( HeldenScreen* ) m_ScreenVec[VSP_HELDEN_SCREEN];
+        if ( scr )
+        {
+            for ( int i = 0; i < (int)data.m_StringVec.size(); i++ )
+            {
+                scr->AddOutputText( scr->GetDisplay( ), data.m_StringVec[i] );
+            }
+        }
+    }
     else if ( data.m_String == string( "Error" ) )
     {
         const char* msg = data.m_StringVec[0].c_str();

@@ -25,6 +25,7 @@
 #include "MeasureMgr.h"
 #include "AdvLinkMgr.h"
 #include "AnalysisMgr.h"
+#include "HeldenMgr.h"
 #include "ParasiteDragMgr.h"
 #include "Quat.h"
 #include "StringUtil.h"
@@ -338,6 +339,7 @@ void Vehicle::Wype()
     AdvLinkMgr.Renew();
     DesignVarMgr.Renew();
     FitModelMgr.Renew();
+    HeldenMgr.Renew();
     AnalysisMgr.Renew();
     VarPresetMgr.Renew();
     ParasiteDragMgr.Renew();
@@ -363,12 +365,16 @@ void Vehicle::SetupPaths()
     m_VSPAEROCmd = string( "vspaero.exe" );
     m_VIEWERCmd = string( "vspviewer.exe" );
     m_SLICERCmd = string( "vspslicer.exe" );
+    m_HeldenSurfCmd = string( "" );
     m_HeldenMeshCmd = string( "" );
+    m_HeldenPatchCmd = string( "" );
 #else
     m_VSPAEROCmd = string( "vspaero" );
     m_VIEWERCmd = string( "vspviewer" );
     m_SLICERCmd = string( "vspslicer" );
+    m_HeldenSurfCmd = string ( "heldensurf" );
     m_HeldenMeshCmd = string ( "heldenmesh" );
+    m_HeldenPatchCmd = string ( "heldenpatch" );
 #endif
 
     if( !CheckForFile( m_ExePath, m_VSPAEROCmd ) )
@@ -383,9 +389,17 @@ void Vehicle::SetupPaths()
     {
         printf( "VSPAERO slicer not found.\n" );
     }
+    if( !CheckForFile( m_ExePath, m_HeldenSurfCmd ) )
+    {
+        printf("Helden Surf not found.\n");
+    }
     if( !CheckForFile( m_ExePath, m_HeldenMeshCmd ) )
     {
         printf("Helden Mesh not found.\n");
+    }
+    if( !CheckForFile( m_ExePath, m_HeldenPatchCmd ) )
+    {
+        printf("Helden Patch not found.\n");
     }
 
     m_CustomScriptDirs.push_back( string( "./CustomScripts/" ) );
@@ -1426,6 +1440,7 @@ xmlNodePtr Vehicle::EncodeXml( xmlNodePtr & node, int set )
 
     LinkMgr.EncodeXml( node );
     AdvLinkMgr.EncodeXml( node );
+    HeldenMgr.EncodeXml( node );
     VSPAEROMgr.EncodeXml( node );
     VarPresetMgr.EncodeXml( node );
     m_CfdSettings.EncodeXml( node );
@@ -1466,6 +1481,7 @@ xmlNodePtr Vehicle::DecodeXml( xmlNodePtr & node )
     // It is mostly the Geoms, but also materials, presets, links, and advanced links.
     DecodeXmlGeomsOnly( node );
 
+    HeldenMgr.DecodeXml( node );
     VSPAEROMgr.DecodeXml( node );
     m_CfdSettings.DecodeXml( node );
     m_CfdGridDensity.DecodeXml( node );
@@ -3493,6 +3509,10 @@ string Vehicle::getExportFileName( int type )
     {
         doreturn = true;
     }
+    else if ( type == HELDEN_IGES_TYPE )
+    {
+        doreturn = true;
+    }
 
     if( doreturn )
     {
@@ -3557,6 +3577,10 @@ void Vehicle::setExportFileName( int type, string f_name )
     {
         doset = true;
     }
+    else if ( type == HELDEN_IGES_TYPE )
+    {
+        doset = true;
+    }
 
     if( doset )
     {
@@ -3566,8 +3590,8 @@ void Vehicle::setExportFileName( int type, string f_name )
 
 void Vehicle::resetExportFileNames()
 {
-    const char *suffix[] = {"_CompGeom.txt", "_CompGeom.csv", "_DragBuild.tsv", "_AwaveSlice.txt", "_MassProps.txt", "_DegenGeom.csv", "_DegenGeom.m", "_ProjArea.csv", "_WaveDrag.txt", ".tri", "_ParasiteBuildUp.csv" };
-    const int types[] = { COMP_GEOM_TXT_TYPE, COMP_GEOM_CSV_TYPE, DRAG_BUILD_TSV_TYPE, SLICE_TXT_TYPE, MASS_PROP_TXT_TYPE, DEGEN_GEOM_CSV_TYPE, DEGEN_GEOM_M_TYPE, PROJ_AREA_CSV_TYPE, WAVE_DRAG_TXT_TYPE, VSPAERO_PANEL_TRI_TYPE, DRAG_BUILD_CSV_TYPE };
+    const char *suffix[] = {"_CompGeom.txt", "_CompGeom.csv", "_DragBuild.tsv", "_AwaveSlice.txt", "_MassProps.txt", "_DegenGeom.csv", "_DegenGeom.m", "_ProjArea.csv", "_WaveDrag.txt", ".tri", "_ParasiteBuildUp.csv", ".igs" };
+    const int types[] = { COMP_GEOM_TXT_TYPE, COMP_GEOM_CSV_TYPE, DRAG_BUILD_TSV_TYPE, SLICE_TXT_TYPE, MASS_PROP_TXT_TYPE, DEGEN_GEOM_CSV_TYPE, DEGEN_GEOM_M_TYPE, PROJ_AREA_CSV_TYPE, WAVE_DRAG_TXT_TYPE, VSPAERO_PANEL_TRI_TYPE, DRAG_BUILD_CSV_TYPE, HELDEN_IGES_TYPE };
     const int ntype = ( sizeof(types) / sizeof(types[0]) );
     int pos;
 
